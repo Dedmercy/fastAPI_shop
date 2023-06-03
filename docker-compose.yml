@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+#  web:
+#    container_name: fastAPI_app
+#    build:
+#      context: ./backend
+#      dockerfile: Dockerfile
+#    env_file:
+#      - ./backend/.env
+#    command: bash -c "cd /code/app && alembic upgrade head && uvicorn app:app run --host localhost --port 8080 --reload"
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - coffee_shop_network
+#    depends_on:
+#      - postgres
+#    restart: on-failure
+#    volumes:
+#      - ./:/app
+
+  coffee_postgres:
+    container_name: postgres
+    image: postgres
+    env_file:
+      - backend/.env
+    environment:
+      - "POSTGRES_USER=${POSTGRES_USERNAME}"
+      - "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
+      - "POSTGRES_DB=${POSTGRES_DATABASE}"
+    volumes:
+      - postgres_volume:/var/lib/postgresql/data/
+    ports:
+      - "40002:5432"
+    networks:
+      - coffee_shop_network
+
+    #  mongo:
+    #    container_name: mongo
+    #    image: mongo
+    #    env_file:
+    #      - backend/.env
+    #    environment:
+    #      - "MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}"
+    #      - "MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}"
+    #      - "MONGO_INITDB_DATABASE=${MONGO_DATABASE}"
+    #    volumes:
+    #      - mongo_volume:/data/db
+    #    ports:
+    #      - "40001:27017"
+    #    networks:
+    #      - coffee_shop_network
+
+
+volumes:
+#  mongo_volume: {}
+  postgres_volume: {}
+
+networks:
+  coffee_shop_network:
+    driver: "bridge"
