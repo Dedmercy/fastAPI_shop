@@ -1,11 +1,6 @@
-from sqlalchemy import select
-
-from src.repository.base_repo import BaseRepository
-from src.models.models import Account, PersonalData
-
-from src.database.postgres_db import postgres_db
+from src.repository.base_repo import BasePostgresRepository
+from src.models.postgres_models import Account, PersonalData
 
 
-class PersonalDataRepository(BaseRepository):
+class PersonalDataRepository(BasePostgresRepository):
     model = PersonalData
-

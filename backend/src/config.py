@@ -9,7 +9,7 @@ load_dotenv()
 
 class Settings(BaseModel):
     """
-        Класс, содержащий данные о конфиге
+        Конфигурационный класс.
     """
 
     # Postgres
@@ -21,7 +21,7 @@ class Settings(BaseModel):
 
     # Mongo
     mongo_username: str
-    postgres_password: str
+    mongo_password: str
     mongo_database: str
     mongo_host: str
     mongo_port: str

@@ -2,14 +2,14 @@ import uvicorn
 
 from fastapi import FastAPI
 from src.database.postgres_db import postgres_db
-from src.routes import routers_list
+from src.database.mongo_db import mongo_db
 from src.server import App
 
 
 def create_app() -> FastAPI:
     app = FastAPI(
             title="Coffee shop",
-            description="My coffee shop"
+            description="My coffee/tee shop"
     )
 
     return App(app).get_app()
@@ -20,7 +20,8 @@ app = create_app()
 
 @app.on_event("startup")
 async def startup():
-    postgres_db.initialization()
+    await postgres_db.initialization()
+    await mongo_db.initialization()
 
 
 @app.on_event("shutdown")

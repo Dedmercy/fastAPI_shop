@@ -35,25 +35,25 @@ services:
     networks:
       - coffee_shop_network
 
-    #  mongo:
-    #    container_name: mongo
-    #    image: mongo
-    #    env_file:
-    #      - backend/.env
-    #    environment:
-    #      - "MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}"
-    #      - "MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}"
-    #      - "MONGO_INITDB_DATABASE=${MONGO_DATABASE}"
-    #    volumes:
-    #      - mongo_volume:/data/db
-    #    ports:
-    #      - "40001:27017"
-    #    networks:
-    #      - coffee_shop_network
+  coffee_mongo:
+    container_name: mongo
+    image: mongo
+    env_file:
+      - backend/.env
+    environment:
+      - "MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}"
+      - "MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}"
+      - "MONGO_INITDB_DATABASE=${MONGO_DATABASE}"
+    volumes:
+      - mongo_volume:/data/db
+    ports:
+      - "40001:27017"
+    networks:
+      - coffee_shop_network
 
 
 volumes:
-#  mongo_volume: {}
+  mongo_volume: {}
   postgres_volume: {}
 
 networks:
