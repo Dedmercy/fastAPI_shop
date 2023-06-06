@@ -17,17 +17,13 @@ services:
 #      - postgres
 #    restart: on-failure
 #    volumes:
-#      - ./:/app
+#      - ./:/appS
 
   coffee_postgres:
     container_name: postgres
     image: postgres
     env_file:
-      - backend/.env
-    environment:
-      - "POSTGRES_USER=${POSTGRES_USERNAME}"
-      - "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
-      - "POSTGRES_DB=${POSTGRES_DATABASE}"
+      - ./database.env
     volumes:
       - postgres_volume:/var/lib/postgresql/data/
     ports:
@@ -36,14 +32,10 @@ services:
       - coffee_shop_network
 
   coffee_mongo:
-    container_name: mongo
+    container_name: coffee_mongo
     image: mongo
     env_file:
-      - backend/.env
-    environment:
-      - "MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}"
-      - "MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}"
-      - "MONGO_INITDB_DATABASE=${MONGO_DATABASE}"
+      - ./database.env
     volumes:
       - mongo_volume:/data/db
     ports:

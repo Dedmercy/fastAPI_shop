@@ -3,3 +3,4 @@ backend/.env
 .idea
 .mypy_cache
 .mypy_cache/*
+database.env

@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 
-from beanie import Document, Indexed
+from beanie import Document, Indexed, Link
 
 
 class Product(Document):
@@ -16,3 +16,10 @@ class Product(Document):
         validate_on_save = True
 
 
+# class Cart(Document):
+#     _id: int
+#     products: List[Link[Product]]
+#
+#     class Settings:
+#         name = 'cart'
+#         validate_on_save = True

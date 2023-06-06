@@ -18,20 +18,15 @@ UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
 class BasePostgresRepository:
     """
-        Базовый класс, хранящий набор функций реализующий CRUD операции для PostgreSQL.
+        The base class that stores a set of functions that implements CRUD operations for PostgreSQL.
     """
 
-    model: PostgresModel = Generic[PostgresModel]
+    model = Generic[PostgresModel]
 
     @classmethod
     async def create(cls, schema: CreateSchemaType, session: AsyncSession) -> PostgresModel:
         """
-        Внесение новой записи в таблицу.
-
-        :param schema: Схема с вводными данными.
-        :param session: Сеанс работы базы данных.
-
-        :return: Возвращает созданную запись.
+            Inserting a new record in the database.
         """
 
         schema_data = jsonable_encoder(schema)
@@ -42,10 +37,7 @@ class BasePostgresRepository:
     @classmethod
     async def get_all(cls, session: AsyncSession) -> List[PostgresModel]:
         """
-        Получение всех существующих записей в таблице.
-
-        :param session: Сеанс работы базы данных.
-        :return: Возвращает список всех существующих записей.
+            Getting all existing records in cls.model table.
         """
 
         query = select(cls.model).order_by(cls.model.id)
@@ -54,12 +46,18 @@ class BasePostgresRepository:
 
     @classmethod
     async def get_by_id(cls, id_: int, session: AsyncSession) -> PostgresModel:
+        """
+            Getting record in cls.model table by id.
+        """
         query = select(cls.model).where(cls.model.id == id_)
         result = await session.execute(query)
         return result.scalars().one_or_none()
 
     @classmethod
     async def update(cls, id_: int, schema: UpdateSchemaType, session: AsyncSession) -> PostgresModel:
+        """
+            Updating record in cls.model table.
+        """
         schema_data = jsonable_encoder(schema)
         query = update(cls.model).where(
             cls.model.id == id_
@@ -69,21 +67,33 @@ class BasePostgresRepository:
 
     @classmethod
     async def delete(cls, id_: int, session: AsyncSession) -> PostgresModel:
+        """
+            Deleting record in cls.model table.
+        """
         query = delete(cls.model).where(cls.model.id == id_).returning(cls.model)
         result = await session.execute(query)
         return result.scalars().one()
 
 
 class BaseMongoRepository:
+    """
+           The base class that stores a set of functions that implements CRUD operations for MongoDB.
+    """
     model = Generic[MongoModel]
 
     @classmethod
     async def get_all(cls):
+        """
+            Getting all existing records in cls.model table.
+        """
         result = await cls.model.find_all().to_list()
         return result
 
     @classmethod
     async def create(cls, schema: CreateSchemaType):
+        """
+            Inserting a new record in the database.
+        """
         schema_data = jsonable_encoder(schema)
         new_document = cls.model(**schema_data)
         result = await cls.model.insert_one(new_document)
@@ -91,11 +101,17 @@ class BaseMongoRepository:
 
     @classmethod
     async def get_by_id(cls, id_: str):
+        """
+            Getting record in cls.model table by id.
+        """
         result = await cls.model.find_one(cls.model.id == PydanticObjectId(id_))
         return result
 
     @classmethod
     async def update(cls, schema: UpdateSchemaType, id_: str):
+        """
+            Updating record in cls.model table.
+        """
         schema_data = jsonable_encoder(schema)
 
         await cls.model.find_one(
@@ -107,7 +123,9 @@ class BaseMongoRepository:
 
     @classmethod
     async def delete(cls, id_: str):
-
+        """
+            Deleting record in cls.model table.
+        """
         result = await cls.model.find_one(cls.model.id == PydanticObjectId(id_))
 
         await result.delete()

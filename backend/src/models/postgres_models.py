@@ -1,6 +1,6 @@
 from typing import List
 
-from sqlalchemy import String, MetaData, ForeignKey
+from sqlalchemy import String, MetaData, ForeignKey, PrimaryKeyConstraint
 from sqlalchemy.orm import DeclarativeBase, relationship
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import Mapped
@@ -29,7 +29,8 @@ class Role(Base):
     __tablename__ = "role"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str]
-    accounts: Mapped[List["Account"]] = relationship(back_populates="role")
+
+    role_account: Mapped[List["Account"]] = relationship(back_populates="account_role")
 
 
 class Account(Base):
@@ -38,23 +39,30 @@ class Account(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     username: Mapped[str_25] = mapped_column(unique=True)
     password: Mapped[str]
-
     role_id: Mapped[int] = mapped_column(ForeignKey("role.id"))
-    role: Mapped["Role"] = relationship(back_populates="accounts")
-    personal_data: Mapped["PersonalData"] = relationship(back_populates="account")
+
+    account_role: Mapped["Role"] = relationship(back_populates="role_account")
+    account_pd: Mapped["PersonalData"] = relationship(back_populates="pd_account")
+    account_cart: Mapped["Cart"] = relationship(back_populates="cart_account")
 
 
 class PersonalData(Base):
     __tablename__ = "personal_data"
 
     id: Mapped[int] = mapped_column(ForeignKey("account.id"), primary_key=True)
-    account: Mapped["Account"] = relationship(back_populates="personal_data")
-
     first_name: Mapped[str_50]
     middle_name: Mapped[str_50 | None]
     last_name: Mapped[str_50]
-
     email: Mapped[str_50]
     phone: Mapped[phone]
 
+    pd_account: Mapped["Account"] = relationship(back_populates="account_pd")
 
+
+class Cart(Base):
+    __tablename__ = 'cart'
+
+    account_id: Mapped[int] = mapped_column(ForeignKey("account.id"), primary_key=True)
+    product_id: Mapped[str] = mapped_column(primary_key=True)
+
+    cart_account: Mapped["Account"] = relationship(back_populates="account_cart")

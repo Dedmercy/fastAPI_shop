@@ -1,6 +1,5 @@
 import os
 
-from typing import Dict
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -9,7 +8,7 @@ load_dotenv()
 
 class Settings(BaseModel):
     """
-        Конфигурационный класс.
+        Project configuration class.
     """
 
     # Postgres
@@ -26,12 +25,19 @@ class Settings(BaseModel):
     mongo_host: str
     mongo_port: str
 
+    # JWT
+    jwt_secret: str
+    jwt_algorithm: str
+    jwt_durability: str
+
     class Config:
         frozen = True
 
 
-def get_config():
-    __config_params: Dict[str, str]
+def get_config() -> Settings:
+    """
+        Get a config instance.
+    """
     __config_params = {param: os.environ.get(param.upper()) for param in Settings.__fields__}
 
     return Settings(**__config_params)

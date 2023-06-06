@@ -1,18 +1,19 @@
 import uvicorn
 
 from fastapi import FastAPI
+
 from src.database.postgres_db import postgres_db
 from src.database.mongo_db import mongo_db
 from src.server import App
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(
+    app_ = FastAPI(
             title="Coffee shop",
             description="My coffee/tee shop"
     )
 
-    return App(app).get_app()
+    return App(app_).get_app()
 
 
 app = create_app()

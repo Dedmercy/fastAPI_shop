@@ -1,11 +1,13 @@
-from fastapi import APIRouter, HTTPException
-from fastapi.encoders import jsonable_encoder
+from fastapi import APIRouter, HTTPException, Depends
 
 from src.schemas.user import UserCreateBase, AccountCreateBase, PersonalDataCreateBase
 from src.schemas.user import UserUpdateBase, PersonalDataUpdateBase, AccountUpdateBase
 from src.repository.account_repo import AccountRepository
 from src.repository.personal_data_repo import PersonalDataRepository
+from src.repository.cart_repo import C
 from src.database.postgres_db import postgres_db
+from src.auth.auth import AuthenticationHasher
+from src.auth.jwt import JWTRepository
 
 router = APIRouter(
     prefix='/users',
@@ -16,7 +18,6 @@ router = APIRouter(
 @router.get('/all')
 async def get_all_accounts():
     async with postgres_db.session() as session:
-
         accounts = await AccountRepository.get_all(session)
 
     if len(accounts) == 0:
@@ -32,7 +33,6 @@ async def get_all_accounts():
 @router.get('/by_id')
 async def get_account_by_id(id_: int):
     async with postgres_db.session() as session:
-
         account = await AccountRepository.get_by_id(id_, session)
 
         if not account:
@@ -47,7 +47,6 @@ async def get_account_by_id(id_: int):
 
 @router.post('/create')
 async def create_account(obj_in: UserCreateBase):
-
     async with postgres_db.session() as session:
         account_by_username = await AccountRepository.get_by_username(obj_in.username, session)
 
@@ -56,15 +55,15 @@ async def create_account(obj_in: UserCreateBase):
             status_code=404, detail=f"Account with username={obj_in.username} already exists"
         )
 
-    if obj_in.role_id not in (1, 2):
-        raise HTTPException(
-            status_code=404, detail=f"Role with id={obj_in.role_id} not exists"
-        )
+    # if obj_in.role_id not in (1, 2):
+    #     raise HTTPException(
+    #         status_code=404, detail=f"Role with id={obj_in.role_id} not exists"
+    #     )
 
     account = AccountCreateBase(
         username=obj_in.username,
-        password=obj_in.password,
-        role_id=obj_in.role_id
+        password=AuthenticationHasher.get_hashed_password(obj_in.password),
+        role_id=1
     )
 
     personal_data = PersonalDataCreateBase(
@@ -81,6 +80,7 @@ async def create_account(obj_in: UserCreateBase):
             account = await AccountRepository.create(account, session)
             personal_data.id = account.id
             personal_data = await PersonalDataRepository.create(personal_data, session)
+
             await session.commit()
         except Exception as e:
             # TODO СДелать логи
@@ -89,15 +89,20 @@ async def create_account(obj_in: UserCreateBase):
             await session.rollback()
             return {"message": "error"}
 
-    return {"inserted_date": {"inserted_account": account.as_dict(), "inserted_personal_data": personal_data.as_dict()}}
+
+    return {
+        "inserted_date": {
+            "inserted_account": account.as_dict(),
+            "inserted_personal_data": personal_data.as_dict()
+        }
+    }
 
 
 @router.put('/update')
-async def update_account(id_: int, obj_in: UserUpdateBase):
-
+async def update_account(id_: int, obj_in: UserUpdateBase, auth: dict = Depends(JWTRepository.check_admin)):
     account_update = AccountUpdateBase(
         username=obj_in.username,
-        password=obj_in.password
+        password=AuthenticationHasher.get_hashed_password(obj_in.password)
     )
 
     personal_data_update = PersonalDataUpdateBase(
@@ -133,11 +138,16 @@ async def update_account(id_: int, obj_in: UserUpdateBase):
             await session.rollback()
             return {"message": "error"}
 
-    return {"updated_data": {"updated_account": account.as_dict(), "updated_personal_data": personal_data.as_dict()}}
+    return {
+        "updated_data": {
+            "updated_account": account.as_dict(),
+            "updated_personal_data": personal_data.as_dict()
+        }
+    }
 
 
 @router.delete('/delete')
-async def delete_account(id_: int):
+async def delete_account(id_: int, auth: dict = Depends(JWTRepository.check_admin)):
     async with postgres_db.session() as session:
 
         account = await AccountRepository.get_by_id(id_, session)
