@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class CreateProductBase(BaseModel):
+class CreateProductSchema(BaseModel):
     name: str
     description: Optional[str]
     category: str
@@ -11,7 +11,7 @@ class CreateProductBase(BaseModel):
     number: int
 
 
-class UpdateProductBase(BaseModel):
+class UpdateProductSchema(BaseModel):
     name: Optional[str]
     description: Optional[str]
     category: Optional[str]

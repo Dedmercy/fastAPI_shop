@@ -5,10 +5,10 @@ from pydantic import BaseModel
 from beanie import Document, PydanticObjectId
 
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, insert, update, delete
 
 from src.models.postgres_models import Base
+from src.database import postgres
 
 PostgresModel = TypeVar("PostgresModel", bound=Base)
 MongoModel = TypeVar("MongoModel", bound=Document)
@@ -24,37 +24,37 @@ class BasePostgresRepository:
     model = Generic[PostgresModel]
 
     @classmethod
-    async def create(cls, schema: CreateSchemaType, session: AsyncSession) -> PostgresModel:
+    async def get_all(cls) -> List[PostgresModel]:
+        """
+            Getting all existing records in cls.model table.
+        """
+        query = select(cls.model).order_by(cls.model.id)
+        result = await postgres.execute(query)
+
+        return result.scalars().all()
+
+    @classmethod
+    async def create(cls, schema: CreateSchemaType) -> PostgresModel:
         """
             Inserting a new record in the database.
         """
 
         schema_data = jsonable_encoder(schema)
         query = insert(cls.model).values(**schema_data).returning(cls.model)
-        result = await session.execute(query)
+        result = await postgres.execute(query)
         return result.scalars().one()
 
     @classmethod
-    async def get_all(cls, session: AsyncSession) -> List[PostgresModel]:
-        """
-            Getting all existing records in cls.model table.
-        """
-
-        query = select(cls.model).order_by(cls.model.id)
-        result = await session.execute(query)
-        return result.scalars().all()
-
-    @classmethod
-    async def get_by_id(cls, id_: int, session: AsyncSession) -> PostgresModel:
+    async def get_by_id(cls, id_: int) -> PostgresModel:
         """
             Getting record in cls.model table by id.
         """
         query = select(cls.model).where(cls.model.id == id_)
-        result = await session.execute(query)
+        result = await postgres.execute(query)
         return result.scalars().one_or_none()
 
     @classmethod
-    async def update(cls, id_: int, schema: UpdateSchemaType, session: AsyncSession) -> PostgresModel:
+    async def update(cls, id_: int, schema: UpdateSchemaType) -> PostgresModel:
         """
             Updating record in cls.model table.
         """
@@ -62,16 +62,16 @@ class BasePostgresRepository:
         query = update(cls.model).where(
             cls.model.id == id_
         ).values(**schema_data).returning(cls.model)
-        result = await session.execute(query)
+        result = await postgres.execute(query)
         return result.scalars().one()
 
     @classmethod
-    async def delete(cls, id_: int, session: AsyncSession) -> PostgresModel:
+    async def delete(cls, id_: int) -> PostgresModel:
         """
             Deleting record in cls.model table.
         """
         query = delete(cls.model).where(cls.model.id == id_).returning(cls.model)
-        result = await session.execute(query)
+        result = await postgres.execute(query)
         return result.scalars().one()
 
 

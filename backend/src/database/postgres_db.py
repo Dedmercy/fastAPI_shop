@@ -1,5 +1,5 @@
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 
 from src.config import config
 
@@ -17,10 +17,9 @@ class PostgresDB:
 
     async def initialization(self):
         self.engine = create_async_engine(self.db_url)
-        self.session = sessionmaker(self.engine, expire_on_commit=False, class_=AsyncSession)
+        self.session = async_sessionmaker(self.engine, expire_on_commit=False)()
 
     def __getattr__(self, item):
         return getattr(self.session, item)
 
-
-postgres_db = PostgresDB()
+postgres = PostgresDB()

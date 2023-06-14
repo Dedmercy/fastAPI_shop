@@ -20,4 +20,4 @@ class MongoDB:
         await init_beanie(self.client[config.mongo_database], document_models=[Product])
 
 
-mongo_db = MongoDB()
+mongo = MongoDB()

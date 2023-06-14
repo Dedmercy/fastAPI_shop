@@ -1,17 +1,18 @@
 from pydantic import BaseModel
 
 
-class AuthBase(BaseModel):
+class AuthSchema(BaseModel):
     username: str
     password: str
 
 
-class TokenBase(BaseModel):
+class TokenSchema(BaseModel):
     access_token: str
     refresh_token: str
 
 
-class AccountBase(BaseModel):
+class AccountSchema(BaseModel):
+    id: int
     username: str
     password: str
     role_id: str

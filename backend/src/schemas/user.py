@@ -2,7 +2,7 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr
 
 
-class UserCreateBase(BaseModel):
+class UserCreateSchema(BaseModel):
     username: str
     password: str
     first_name: str
@@ -12,13 +12,13 @@ class UserCreateBase(BaseModel):
     phone: str
 
 
-class AccountCreateBase(BaseModel):
+class AccountCreateSchema(BaseModel):
     username: str
     password: str
     role_id: int
 
 
-class PersonalDataCreateBase(BaseModel):
+class PersonalDataCreateSchema(BaseModel):
     id: int
     first_name: str
     middle_name: Optional[str]
@@ -27,7 +27,7 @@ class PersonalDataCreateBase(BaseModel):
     phone: str
 
 
-class UserUpdateBase(BaseModel):
+class UserUpdateSchema(BaseModel):
     username: Optional[str]
     password: Optional[str]
     first_name: Optional[str]
@@ -37,12 +37,12 @@ class UserUpdateBase(BaseModel):
     phone: Optional[str]
 
 
-class AccountUpdateBase(BaseModel):
+class AccountUpdateSchema(BaseModel):
     username: Optional[str]
     password: Optional[str]
 
 
-class PersonalDataUpdateBase(BaseModel):
+class PersonalDataUpdateSchema(BaseModel):
     first_name: Optional[str]
     middle_name: Optional[str]
     last_name: Optional[str]

@@ -1,18 +1,24 @@
-from fastapi import FastAPI
-from database.postgres_db import postgres_db
-from src.api.routes import routers_list
+from typing import List
+
+from fastapi import FastAPI, APIRouter
+
+from src.database import mongo, postgres
+from src.api.endpoints import routers_list
 
 
-class App:
+class AppCreator:
     """
         Class of initialization of an app.
     """
     __app: FastAPI
 
-    def __init__(self, app: FastAPI):
-        self.__app = app
-        # self.register_events(self.__app)
-        self.register_routes(self.__app)
+    def __init__(self):
+        self.__app = FastAPI(
+            title="Coffee shop",
+            description="My coffee/tee shop"
+        )
+        self.register_events()
+        self.register_routes()
 
     def get_app(self) -> FastAPI:
         """
@@ -20,14 +26,16 @@ class App:
         """
         return self.__app
 
-    @staticmethod
-    def register_events(app: FastAPI):
-        pass
+    def register_events(self):
+        @self.__app.on_event("startup")
+        async def startup():
+            await postgres.initialization()
+            await mongo.initialization()
 
-    @staticmethod
-    def register_routes(app: FastAPI):
-        """
-            Set routes to the app instance.
-        """
+        @self.__app.on_event("shutdown")
+        async def shutdown():
+            await postgres.close()
+
+    def register_routes(self):
         for router in routers_list:
-            app.include_router(router)
+            self.__app.include_router(router)

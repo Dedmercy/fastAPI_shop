@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from bson import ObjectId
 
 from src.repository.products_repo import ProductRepository
-from src.schemas.product import CreateProductBase, UpdateProductBase
+from src.schemas.product import CreateProductSchema, UpdateProductSchema
 from src.auth.jwt import JWTRepository
 
 router = APIRouter(
@@ -18,7 +18,7 @@ async def get_all_products():
 
 
 @router.post("/create")
-async def create_product(obj_in: CreateProductBase, auth: dict = Depends(JWTRepository.check_admin)):
+async def create_product(obj_in: CreateProductSchema, auth: dict = Depends(JWTRepository.check_admin)):
     result = await ProductRepository.create(obj_in)
     return {"created_product": result}
 
@@ -44,7 +44,7 @@ async def get_product_by_id(id_: str):
 
 
 @router.put('/update')
-async def update_product(obj_in: UpdateProductBase, id_: str, auth: dict = Depends(JWTRepository.check_admin)):
+async def update_product(obj_in: UpdateProductSchema, id_: str, auth: dict = Depends(JWTRepository.check_admin)):
 
     if not ObjectId.is_valid(id_):
         raise HTTPException(

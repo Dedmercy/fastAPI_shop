@@ -50,10 +50,11 @@ class PersonalData(Base):
     __tablename__ = "personal_data"
 
     id: Mapped[int] = mapped_column(ForeignKey("account.id"), primary_key=True)
+
     first_name: Mapped[str_50]
     middle_name: Mapped[str_50 | None]
     last_name: Mapped[str_50]
-    email: Mapped[str_50]
+    email: Mapped[str_50] = mapped_column(unique=True)
     phone: Mapped[phone]
 
     pd_account: Mapped["Account"] = relationship(back_populates="account_pd")
@@ -64,5 +65,6 @@ class Cart(Base):
 
     account_id: Mapped[int] = mapped_column(ForeignKey("account.id"), primary_key=True)
     product_id: Mapped[str] = mapped_column(primary_key=True)
+    amount: Mapped[int] = mapped_column(default=1)
 
     cart_account: Mapped["Account"] = relationship(back_populates="account_cart")
