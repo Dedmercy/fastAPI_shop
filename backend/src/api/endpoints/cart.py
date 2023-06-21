@@ -1,7 +1,5 @@
-from fastapi import APIRouter, HTTPException, Depends
-from bson import ObjectId
+from fastapi import APIRouter, Depends
 
-from src.repository.products_repo import ProductRepository
 from src.auth.jwt import JWTRepository
 from src.services import ShoppingService
 

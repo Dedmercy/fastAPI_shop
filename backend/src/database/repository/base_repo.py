@@ -7,7 +7,7 @@ from beanie import Document, PydanticObjectId
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select, insert, update, delete
 
-from src.models.postgres_models import Base
+from src.database.models.postgres_models import Base
 from src.database import postgres
 
 PostgresModel = TypeVar("PostgresModel", bound=Base)

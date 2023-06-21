@@ -1,8 +1,7 @@
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.repository.base_repo import BasePostgresRepository, PostgresModel
-from src.models.postgres_models import Account
+from src.database.repository.base_repo import BasePostgresRepository, PostgresModel
+from src.database.models.postgres_models import Account
 from src.database import postgres
 
 

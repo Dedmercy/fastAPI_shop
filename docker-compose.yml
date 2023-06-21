@@ -1,23 +1,24 @@
 version: "3.9"
 
 services:
-  web:
-    container_name: fastAPI_app
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    env_file:
-      - ./backend/.env
-    command: bash -c "cd /code/app && alembic upgrade head && uvicorn app:app run --host localhost --port 8080 --reload"
-    ports:
-      - "8080:8080"
-    networks:
-      - coffee_shop_network
-    depends_on:
-      - postgres
-    restart: on-failure
-    volumes:
-      - ./:/appS
+#  web:
+#    container_name: fastAPI_app
+#    build:
+#      context: ./backend
+#      dockerfile: Dockerfile
+#    env_file:
+#      - ./backend/.env
+#    command: bash -c "alembic upgrade head && cd /code/app && uvicorn app:app run --host 0.0.0.0 --port 8080 --reload"
+#    ports:
+#      - "8080:8080"
+#    networks:
+#      - coffee_shop_network
+#    depends_on:
+#      - coffee_postgres
+#      - coffee_mongo
+#    restart: on-failure
+#    volumes:
+#      - ./:/appS
 
   coffee_postgres:
     container_name: postgres

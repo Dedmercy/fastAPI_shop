@@ -1,10 +1,9 @@
 from typing import List
-from bson import ObjectId
 
 from sqlalchemy import select, insert, update, delete
 
-from src.repository.base_repo import BasePostgresRepository, PostgresModel, UpdateSchemaType
-from src.models.postgres_models import Cart
+from src.database.repository.base_repo import BasePostgresRepository, PostgresModel, UpdateSchemaType
+from src.database.models.postgres_models import Cart
 from src.schemas.cart import CartSchema
 from src.database import postgres
 

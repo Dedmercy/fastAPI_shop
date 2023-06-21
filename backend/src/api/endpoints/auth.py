@@ -1,11 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
-from src.auth.jwt import JWTRepository
-from src.auth.auth import AuthenticationHasher, oauth2_scheme
-from src.schemas.auth import AccountSchema
 from src.schemas.user import UserCreateSchema
-from src.repository.account_repo import AccountRepository
 from src.services.auth_service import AuthService
 
 router = APIRouter(

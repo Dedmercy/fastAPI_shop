@@ -1,7 +1,7 @@
 from sqlalchemy import select
 
-from src.repository.base_repo import BasePostgresRepository
-from src.models.postgres_models import Account, PersonalData
+from src.database.repository.base_repo import BasePostgresRepository
+from src.database.models.postgres_models import PersonalData
 from src.database import postgres
 
 

@@ -8,4 +8,4 @@ RUN pip install --no-cache-dir --upgrade -r /code/app/requirements.txt
 
 EXPOSE 8080
 
-WORKDIR /code/app
+WORKDIR /code

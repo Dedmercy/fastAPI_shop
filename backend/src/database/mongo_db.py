@@ -2,7 +2,7 @@ from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
 
 from src.config import config
-from src.models.mongo_models import Product
+from src.database.models.mongo_models import Product
 
 
 class MongoDB:

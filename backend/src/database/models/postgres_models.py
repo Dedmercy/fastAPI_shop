@@ -1,6 +1,6 @@
 from typing import List
 
-from sqlalchemy import String, MetaData, ForeignKey, PrimaryKeyConstraint
+from sqlalchemy import String, MetaData, ForeignKey
 from sqlalchemy.orm import DeclarativeBase, relationship
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import Mapped
@@ -68,3 +68,4 @@ class Cart(Base):
     amount: Mapped[int] = mapped_column(default=1)
 
     cart_account: Mapped["Account"] = relationship(back_populates="account_cart")
+

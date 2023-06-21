@@ -1,12 +1,12 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src.auth.auth import AuthenticationHasher
 from src.auth.jwt import JWTRepository
 from src.database import postgres
-from src.repository.account_repo import AccountRepository
+from src.database.repository.account_repo import AccountRepository
 from src.schemas.auth import AccountSchema
-from src.repository.personal_data_repo import PersonalDataRepository
+from src.database.repository.personal_data_repo import PersonalDataRepository
 from src.schemas.user import UserCreateSchema, AccountCreateSchema, PersonalDataCreateSchema
 
 
@@ -27,7 +27,7 @@ class AuthService:
 
         if not account:
             raise HTTPException(
-                status_code=403,
+                status_code=status.HTTP_403_FORBIDDEN,
                 detail=f"User with username:{schema.username} is not exists"
             )
 
@@ -67,11 +67,14 @@ class AuthService:
             personal_data.id = account.id
             personal_data = await self.personal_data_repository.create(personal_data)
             await postgres.commit()
-        except Exception as e:
+        except Exception:
             # TODO СДелать логи
             # TODO Сделать отлов ошибок
             await postgres.rollback()
-            return {"message": "error"}
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Something goes wrong"
+            )
 
         return {
             "inserted_date": {

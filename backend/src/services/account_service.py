@@ -1,5 +1,5 @@
-from src.repository.account_repo import AccountRepository
-from src.repository.personal_data_repo import PersonalDataRepository
+from src.database.repository.account_repo import AccountRepository
+from src.database.repository.personal_data_repo import PersonalDataRepository
 
 
 class AccountService:
@@ -22,3 +22,8 @@ class AccountService:
                 }
         }
 
+    async def update_account_data(self, auth_data: dict):
+        pass
+
+    async def update_password(self):
+        pass

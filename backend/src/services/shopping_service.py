@@ -1,8 +1,8 @@
 from fastapi import HTTPException
 
 
-from src.repository.cart_repo import CartRepository
-from src.repository.products_repo import ProductRepository
+from src.database.repository.cart_repo import CartRepository
+from src.database.repository.products_repo import ProductRepository
 from src.schemas.cart import CartSchema, UpdateCartSchema
 from src.database import postgres
 
@@ -56,8 +56,6 @@ class ShoppingService:
         await self.__check_product_id(product_id)
 
         amount = await self.__get_amount(auth['id'], product_id)
-
-        print(amount)
 
         if amount == 0:
             raise HTTPException(
